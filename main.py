@@ -3,7 +3,7 @@ from flask import Flask, redirect, render_template
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 
 from data import db_session
-from data.users import LoginForm, User
+from data.users import LoginForm, User, RegisterForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'very_secret_key'
@@ -38,6 +38,26 @@ def login():
                                message="Неправильный логин или пароль",
                                form=form)
     return render_template('login.html', title='Авторизация', form=form)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        session = db_session.create_session()
+        user = User()
+        user.login = form.login.data
+        user.set_password(form.password.data)
+        user.is_admin = False
+        try:
+            session.add(user)
+            session.commit()
+        except:
+            return render_template('register.html',
+                                   message="Пользователь с таким логином уже существует",
+                                   form=form)
+        return redirect("/login")
+    return render_template('register.html', title='Авторизация', form=form)
 
 
 @app.route('/logout')
