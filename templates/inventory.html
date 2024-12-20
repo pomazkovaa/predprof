@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if admin %}
+        <a href="inventory_edit" class="btn btn-secondary">Добавить инвентарь</a>
+    {% endif %}
+    <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">№</th>
+              <th scope="col">Название</th>
+              <th scope="col">Количество</th>
+              <th scope="col">Состояние</th>
+              <th scope="col">Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for item in inventory%}
+            <tr>
+              <th scope="row">{{ loop.index }}</th>
+              <td>{{ item.name }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ item.state }}</td>
+              <td>
+                {% if admin %}
+                <a href="/inventory_edit/{{ item.id }}" class="btn btn-warning">Изменить</a>
+                <a href="/inventory_delete/{{ item.id }}" class="btn btn-danger">Удалить</a>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+    </table>
+{% endblock %}
