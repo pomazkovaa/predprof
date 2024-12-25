@@ -5,6 +5,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import orm
 
 from data.db_session import SqlAlchemyBase
 
@@ -16,6 +17,7 @@ class User(SqlAlchemyBase, UserMixin):
     login = sqlalchemy.Column(sqlalchemy.String, nullable=False, unique=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     is_admin = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False)
+    inventory = orm.relationship('Inventory', back_populates='owner')
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
