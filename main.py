@@ -4,7 +4,7 @@ from flask_login import LoginManager, login_user, current_user, login_required, 
 from flask_restful import abort
 
 from data import db_session
-from data.inventory import Inventory, InventoryForm
+from data.inventory import Inventory, InventoryAddForm, InventoryEditForm
 from data.users import LoginForm, User, RegisterForm
 
 app = Flask(__name__)
@@ -54,12 +54,12 @@ def inventory_delete(id):
 def inventory_add():
     session = db_session.create_session()
 
-    form = InventoryForm()
+    form = InventoryAddForm()
     if form.validate_on_submit():
         item = Inventory()
         item.name = form.name.data
         item.quantity = form.quantity.data
-        item.state = form.state.data
+        item.state_id = 1
         session.add(item)
         session.commit()
         return redirect('/inventory')
@@ -67,20 +67,29 @@ def inventory_add():
     return render_template('inventory_edit.html', title='Добавление инвентаря', form=form)
 
 
-# @app.route('/inventory_edit/<int:id>', methods=['GET', 'POST'])
-# @login_required
-# def inventory_edit(id):
-#     session = db_session.create_session()
-#
-#     item = session.query(Inventory).filter(Inventory.id == id).first()
-#     if not item:
-#         abort(404)
-#
-#     form = InventoryForm()
-#     if request.method == 'GET':
-#         form.name = item.name
-#         form.quantity = item.quantity
-#         # TODO: finish editing after I add a state option
+@app.route('/inventory_edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def inventory_edit(id):
+    session = db_session.create_session()
+
+    item = session.query(Inventory).filter(Inventory.id == id).first()
+    if not item:
+        abort(404)
+
+    form = InventoryEditForm()
+    if request.method == 'GET':
+        form.name.data = item.name
+        form.quantity.data = item.quantity
+        form.state.data = item.state.id
+
+    if form.validate_on_submit():
+        item.name = form.name.data
+        item.quantity = form.quantity.data
+        item.state_id = form.state.data
+        session.commit()
+        return redirect('/inventory')
+
+    return render_template('inventory_edit.html', title='Изменение инвентаря', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])

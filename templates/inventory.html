@@ -20,7 +20,7 @@
               <th scope="row">{{ loop.index }}</th>
               <td>{{ item.name }}</td>
               <td>{{ item.quantity }}</td>
-              <td>{{ item.state }}</td>
+              <td>{{ item.state.name }}</td>
               <td>
                 {% if admin %}
                 <a href="/inventory_edit/{{ item.id }}" class="btn btn-warning">Изменить</a>

@@ -23,14 +23,17 @@
             </p>
         {% endfor %}
     </p>
+    {% if title != 'Добавление инвентаря' %}
     <p>
-        {{ form.state.label }}: {{ form.state}}<br>
+        {{ form.state.label }}<br>
+        {{ form.state(class="form-control") }}<br>
         {% for error in form.state.errors %}
             <p class="alert alert-danger" role="alert">
                 {{ error }}
             </p>
         {% endfor %}
     </p>
+    {% endif %}
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}
     <a href="/inventory", class="btn btn-primary">Отмена</a></p>
     {{message}}
