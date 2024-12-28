@@ -33,6 +33,15 @@
             </p>
         {% endfor %}
     </p>
+    <p>
+        {{ form.user.label }}<br>
+        {{ form.user(class="form-control") }}<br>
+        {% for error in form.user.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
     {% endif %}
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}
     <a href="/inventory", class="btn btn-primary">Отмена</a></p>

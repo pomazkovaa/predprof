@@ -5,7 +5,9 @@
 <div class="d-flex justify-content-center">
     <div class="btn-group-vertical" align="center" style="width: 200px;">
         <a href="inventory" class="btn btn-secondary">Инвентарь</a>
+        {% if admin %}
         <a href="procurement" class="btn btn-secondary">Закупки</a>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

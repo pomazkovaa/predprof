@@ -11,6 +11,7 @@
               <th scope="col">Название</th>
               <th scope="col">Количество</th>
               <th scope="col">Состояние</th>
+              <th scope="col">Пользователь</th>
               <th scope="col">Действия</th>
             </tr>
           </thead>
@@ -21,6 +22,13 @@
               <td>{{ item.name }}</td>
               <td>{{ item.quantity }}</td>
               <td>{{ item.state.name }}</td>
+              <td>
+                  {% if item.user_id == -1 %}
+                  Не закреплен
+                  {% else %}
+                  {{ item.user.login }}
+                  {% endif %}
+              </td>
               <td>
                 {% if admin %}
                 <a href="/inventory_edit/{{ item.id }}" class="btn btn-warning">Изменить</a>

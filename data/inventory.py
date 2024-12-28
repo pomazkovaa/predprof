@@ -17,6 +17,8 @@ class Inventory(SqlAlchemyBase):
     quantity = sqlalchemy.Column(sqlalchemy.Integer, nullable=False)
     state_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("state.id"), nullable=False)
     state = orm.relationship('State')
+    user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"), nullable=False)
+    user = orm.relationship('User')
 
 
 class InventoryAddForm(FlaskForm):
@@ -31,4 +33,5 @@ class InventoryEditForm(FlaskForm):
     state = SelectField('Состояние',
                         choices=[(1, 'Новый'), (2, 'Используемый'), (3, 'Сломанный')],
                         validators=[DataRequired()])
+    user = SelectField('Закрепить за пользователем', coerce=int, validators=[DataRequired()])
     submit = SubmitField('Изменить')

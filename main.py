@@ -23,7 +23,7 @@ def main():
 @app.route("/")
 def index():
     if current_user.is_authenticated:
-        return render_template("index.html", title='Главное меню')
+        return render_template("index.html", title='Главное меню', admin=current_user.is_admin)
     else:
         return redirect("/login")
 
@@ -61,6 +61,7 @@ def inventory_add():
         item.name = form.name.data
         item.quantity = form.quantity.data
         item.state_id = 1
+        item.user_id = -1
         session.add(item)
         session.commit()
         return redirect('/inventory')
@@ -78,15 +79,22 @@ def inventory_edit(id):
         abort(404)
 
     form = InventoryEditForm()
+    form.user.choices = [(-1, "Не закреплен")] + [(x.id, x.login) for x in session.query(User).all()]
+    print(form.user.choices)
     if request.method == 'GET':
         form.name.data = item.name
         form.quantity.data = item.quantity
         form.state.data = item.state.id
+        form.user.data = item.user_id
 
     if form.validate_on_submit():
         item.name = form.name.data
         item.quantity = form.quantity.data
-        item.state_id = form.state.data
+        if form.user.data == -1:
+            item.state_id = form.state.data
+        else:
+            item.state_id = 2
+        item.user_id = form.user.data
         session.commit()
         return redirect('/inventory')
 
