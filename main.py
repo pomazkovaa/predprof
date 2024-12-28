@@ -5,6 +5,7 @@ from flask_restful import abort
 
 from data import db_session
 from data.inventory import Inventory, InventoryAddForm, InventoryEditForm
+from data.procurement import Procurement, ProcurementAddForm, ProcurementEditForm
 from data.users import LoginForm, User, RegisterForm
 
 app = Flask(__name__)
@@ -90,6 +91,71 @@ def inventory_edit(id):
         return redirect('/inventory')
 
     return render_template('inventory_edit.html', title='Изменение инвентаря', form=form)
+
+
+@app.route('/procurement')
+@login_required
+def procurement():
+    session = db_session.create_session()
+    return render_template("procurement.html", title="Закупки",
+                           procurements=session.query(Procurement).all())
+
+
+@app.route('/procurement_edit', methods=['GET', 'POST'])
+@login_required
+def procurement_add():
+    session = db_session.create_session()
+
+    form = ProcurementAddForm()
+    if form.validate_on_submit():
+        item = Procurement()
+        item.good = form.good.data
+        item.price = form.price.data
+        item.seller = form.seller.data
+        session.add(item)
+        session.commit()
+        return redirect('/procurement')
+
+    return render_template('procurement_edit.html', title='Добавление закупки', form=form)
+
+
+@app.route('/procurement_edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def procurement_edit(id):
+    session = db_session.create_session()
+
+    item = session.query(Procurement).filter(Procurement.id == id).first()
+    if not item:
+        abort(404)
+
+    form = ProcurementEditForm()
+    if request.method == 'GET':
+        form.good.data = item.good
+        form.price.data = item.price
+        form.seller.data = item.seller
+
+    if form.validate_on_submit():
+        item.good = form.good.data
+        item.price = form.price.data
+        item.seller = form.seller.data
+        session.commit()
+        return redirect('/procurement')
+
+    return render_template('procurement_edit.html', title='Изменение закупки', form=form)
+
+
+@app.route('/procurement_delete/<int:id>')
+@login_required
+def procurement_delete(id):
+    session = db_session.create_session()
+
+    item = session.query(Procurement).filter(Procurement.id == id).first()
+    if item and current_user.is_admin:
+        session.delete(item)
+        session.commit()
+    else:
+        abort(404)
+    return redirect('/procurement')
 
 
 @app.route('/login', methods=['GET', 'POST'])

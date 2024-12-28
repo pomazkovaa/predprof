@@ -15,7 +15,6 @@ class Inventory(SqlAlchemyBase):
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     name = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     quantity = sqlalchemy.Column(sqlalchemy.Integer, nullable=False)
-    # state = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     state_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("state.id"), nullable=False)
     state = orm.relationship('State')
 

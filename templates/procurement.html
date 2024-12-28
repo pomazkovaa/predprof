@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <a href="procurement_edit" class="btn btn-block btn-secondary">Добавить закупку</a>
+    <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">№</th>
+              <th scope="col">Товар</th>
+              <th scope="col">Цена, ₽</th>
+              <th scope="col">Поставщик</th>
+              <th scope="col">Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for item in procurements%}
+            <tr>
+              <th scope="row">{{ loop.index }}</th>
+              <td>{{ item.good }}</td>
+              <td>{{ item.price }}</td>
+              <td>{{ item.seller }}</td>
+              <td>
+                <a href="/procurement_edit/{{ item.id }}" class="btn btn-warning">Изменить</a>
+                <a href="/procurement_delete/{{ item.id }}" class="btn btn-danger">Удалить</a>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+    </table>
+{% endblock %}
