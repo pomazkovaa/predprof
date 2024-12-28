@@ -1,5 +1,7 @@
 import os
 from data import db_session
+from data.request_state import RequestState
+from data.request_type import RequestType
 from data.state import State
 from data.users import User
 
@@ -20,6 +22,16 @@ def main():
             state = State()
             state.name = name
             session.add(state)
+
+        for name in ['Выдача', 'Ремонт', 'Замена']:
+            request_type = RequestType()
+            request_type.name = name
+            session.add(request_type)
+
+        for name in ['На рассмотрении', 'Одобрено', 'Отклонено']:
+            request_state = RequestState()
+            request_state.name = name
+            session.add(request_state)
 
         session.commit()
     else:

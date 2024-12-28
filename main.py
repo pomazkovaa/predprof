@@ -6,6 +6,7 @@ from flask_restful import abort
 from data import db_session
 from data.inventory import Inventory, InventoryAddForm, InventoryEditForm
 from data.procurement import Procurement, ProcurementAddForm, ProcurementEditForm
+from data.request import Request, RequestForm
 from data.users import LoginForm, User, RegisterForm
 
 app = Flask(__name__)
@@ -80,7 +81,6 @@ def inventory_edit(id):
 
     form = InventoryEditForm()
     form.user.choices = [(-1, "Не закреплен")] + [(x.id, x.login) for x in session.query(User).all()]
-    print(form.user.choices)
     if request.method == 'GET':
         form.name.data = item.name
         form.quantity.data = item.quantity
@@ -164,6 +164,60 @@ def procurement_delete(id):
     else:
         abort(404)
     return redirect('/procurement')
+
+
+@app.route('/request')
+@login_required
+def request_route():
+    session = db_session.create_session()
+    if current_user.is_admin:
+        requests = session.query(Request).all()
+        requests.reverse()
+        return render_template("request_admin.html", title="Заявки",
+                               requests=requests)
+    else:
+        requests = session.query(Request).filter(Request.user_id == current_user.id).all()
+        requests.reverse()
+        return render_template("request_user.html", title="Заявки",
+                               requests=requests)
+
+
+# TODO: add request administration for repairs and replacements
+@app.route('/request/<int:id>/<string:action>')
+@login_required
+def request_respond(id, action):
+    if current_user.is_admin:
+        session = db_session.create_session()
+        request = session.query(Request).filter(Request.id == id).first()
+        if action == 'approve':
+            if request.type_id == 1:
+                request.state_id = 2
+                request.item.state_id = 2
+                request.item.user_id = request.user_id
+        elif action == 'decline':
+            if request.type_id == 1:
+                request.state_id = 3
+        session.commit()
+    return redirect('/request')
+
+
+@app.route('/request_create/<int:id>', methods=['GET', 'POST'])
+@login_required
+def request_create(id):
+    session = db_session.create_session()
+
+    form = RequestForm()
+    if form.validate_on_submit():
+        request = Request()
+        request.type_id = form.type.data
+        request.item_id = id
+        request.user_id = current_user.id
+        request.state_id = 1
+        session.add(request)
+        session.commit()
+        return redirect('/inventory')
+
+    return render_template('request_create.html', title='Создать заявку', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
