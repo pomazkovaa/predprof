@@ -34,7 +34,7 @@
                 <a href="/inventory_edit/{{ item.id }}" class="btn btn-warning">Изменить</a>
                 <a href="/inventory_delete/{{ item.id }}" class="btn btn-danger">Удалить</a>
                 {% endif %}
-                {% if not admin and item.state.id != 2 %}
+                {% if not admin and (item.state.id != 2 or item.user_id == current_user.id) %}
                 <a href="/request_create/{{ item.id }}" class="btn btn-secondary">Создать заявку</a>
                 {% endif %}
               </td>

@@ -182,7 +182,6 @@ def request_route():
                                requests=requests)
 
 
-# TODO: add request administration for repairs and replacements
 @app.route('/request/<int:id>/<string:action>')
 @login_required
 def request_respond(id, action):
@@ -194,9 +193,10 @@ def request_respond(id, action):
                 request.state_id = 2
                 request.item.state_id = 2
                 request.item.user_id = request.user_id
+            else:
+                request.state_id = 2
         elif action == 'decline':
-            if request.type_id == 1:
-                request.state_id = 3
+            request.state_id = 3
         session.commit()
     return redirect('/request')
 
@@ -213,9 +213,16 @@ def request_create(id):
         request.item_id = id
         request.user_id = current_user.id
         request.state_id = 1
-        session.add(request)
-        session.commit()
-        return redirect('/inventory')
+        if session.query(Request).filter(Request.type_id == request.type_id,
+                                         Request.item_id == request.item_id,
+                                         Request.user_id == request.user_id,
+                                         Request.state_id == request.state_id).first():
+            return render_template('request_create.html', title='Создать заявку',
+                                   message='Такая заявка уже существует', form=form)
+        else:
+            session.add(request)
+            session.commit()
+            return redirect('/inventory')
 
     return render_template('request_create.html', title='Создать заявку', form=form)
 
