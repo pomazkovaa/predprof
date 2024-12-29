@@ -32,6 +32,6 @@ class InventoryEditForm(FlaskForm):
     quantity = IntegerField('Количество', validators=[DataRequired()])
     state = SelectField('Состояние',
                         choices=[(1, 'Новый'), (2, 'Используемый'), (3, 'Сломанный')],
-                        validators=[DataRequired()])
+                        coerce=int, validators=[DataRequired()])
     user = SelectField('Закрепить за пользователем', coerce=int, validators=[DataRequired()])
     submit = SubmitField('Изменить')

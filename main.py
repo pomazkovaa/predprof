@@ -84,7 +84,7 @@ def inventory_edit(id):
     if request.method == 'GET':
         form.name.data = item.name
         form.quantity.data = item.quantity
-        form.state.data = item.state.id
+        form.state.data = item.state_id
         form.user.data = item.user_id
 
     if form.validate_on_submit():
