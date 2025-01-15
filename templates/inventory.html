@@ -2,7 +2,10 @@
 
 {% block content %}
     {% if admin %}
-        <a href="inventory_edit" class="btn btn-block btn-secondary">Добавить инвентарь</a>
+        <div style="display: flex">
+            <a href="inventory_edit" class="btn btn-secondary" style="width: 100%; margin: 2px">Добавить инвентарь</a>
+            <a href="create_report" class="btn btn-secondary" style="width: 100%; margin: 2px">Создать отчет</a>
+        </div>
     {% endif %}
     <table class="table">
           <thead class="thead-dark">

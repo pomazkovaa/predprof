@@ -4,3 +4,5 @@ flask-restful
 flask-wtf
 sqlalchemy
 wtforms
+flask-excel
+pyexcel-xlsx

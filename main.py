@@ -1,7 +1,9 @@
 import os
+
 from flask import Flask, redirect, render_template, request
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from flask_restful import abort
+from flask_excel import init_excel, make_response_from_array
 
 from data import db_session
 from data.inventory import Inventory, InventoryAddForm, InventoryEditForm
@@ -16,6 +18,8 @@ login_manager.init_app(app)
 
 def main():
     db_session.global_init("db/base.sqlite")
+
+    init_excel(app)
 
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
@@ -99,6 +103,21 @@ def inventory_edit(id):
         return redirect('/inventory')
 
     return render_template('inventory_edit.html', title='Изменение инвентаря', form=form)
+
+
+@app.route('/create_report')
+@login_required
+def report():
+    session = db_session.create_session()
+
+    data = [["Название", "Количество", "Состояние", "Пользователь"]]
+    for item in session.query(Inventory).all():
+        if item.user_id == -1:
+            data.append([item.name, item.quantity, item.state.name, "Не закреплен"])
+        else:
+            data.append([item.name, item.quantity, item.state.name, item.user.name])
+
+    return make_response_from_array(data, file_type='xlsx', file_name='report')
 
 
 @app.route('/procurement')
