@@ -80,7 +80,7 @@ def inventory_edit(id):
         abort(404)
 
     form = InventoryEditForm()
-    form.user.choices = [(-1, "Не закреплен")] + [(x.id, x.login) for x in session.query(User).all()]
+    form.user.choices = [(-1, "Открепить")] + [(x.id, x.login) for x in session.query(User).filter(User.id != 1).all()]
     if request.method == 'GET':
         form.name.data = item.name
         form.quantity.data = item.quantity
@@ -195,6 +195,8 @@ def request_respond(id, action):
                 request.item.user_id = request.user_id
             else:
                 request.state_id = 2
+                request.item.state_id = 3
+                request.item.user_id = -1
         elif action == 'decline':
             request.state_id = 3
         session.commit()
