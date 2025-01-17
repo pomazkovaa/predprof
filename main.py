@@ -115,7 +115,7 @@ def report():
         if item.user_id == -1:
             data.append([item.name, item.quantity, item.state.name, "Не закреплен"])
         else:
-            data.append([item.name, item.quantity, item.state.name, item.user.name])
+            data.append([item.name, item.quantity, item.state.name, item.user.login])
 
     return make_response_from_array(data, file_type='xlsx', file_name='report')
 
