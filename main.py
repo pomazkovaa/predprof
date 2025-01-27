@@ -62,6 +62,9 @@ def inventory_add():
 
     form = InventoryAddForm()
     if form.validate_on_submit():
+        if form.quantity.data < 1:
+            return render_template('inventory_edit.html', title='Добавление инвентаря', form=form,
+                                   message='Количество не может быть меньше 1')
         item = Inventory()
         item.name = form.name.data
         item.quantity = form.quantity.data
@@ -92,6 +95,9 @@ def inventory_edit(id):
         form.user.data = item.user_id
 
     if form.validate_on_submit():
+        if form.quantity.data < 1:
+            return render_template('inventory_edit.html', title='Добавление инвентаря', form=form,
+                                   message='Количество не может быть меньше 1')
         item.name = form.name.data
         item.quantity = form.quantity.data
         if form.user.data == -1:
